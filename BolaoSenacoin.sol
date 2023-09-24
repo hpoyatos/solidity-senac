@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity >=0.8.18 <0.9.0;
 
-// Importaçào do contrato ERC20 do Senacoin e Ownable para uso do modificador onlyOwner
+// Importação do contrato ERC20 do Senacoin e Ownable para uso do modificador onlyOwner
 import "./Senacoin.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
