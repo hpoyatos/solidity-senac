@@ -35,7 +35,7 @@ contract GuardaSenacoin {
 
     function sacar(uint256 _quantia) public {
         // Valida se a quantia pedida no saque é inferior ou igual ao saldo total deste contrato.
-        require(Senacoin(senacoinAddress).balanceOf(address(this)) >= _quantia, "O contrato nao tem fundos o suficiente");
+        require(Senacoin(senacoinAddress).balanceOf(address(this)) >= _quantia, "Fundos insuficientes para saque na carteira do contrato.");
         // Transfere Senacoins para quem chamou este contrato.
         Senacoin(senacoinAddress).transfer(msg.sender, _quantia);
     }
