@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0
+em// SPDX-License-Identifier: GPL-3.0
 pragma solidity >=0.8.18 <0.9.0;
 
 // Importação do contrato ERC20 do Senacoin e Ownable para uso do modificador onlyOwner
@@ -91,7 +91,7 @@ contract BolaoSenacoin is Ownable {
         return gerente;
     }
 
-    function getSaldo() public view returns (uint256) {
+    function getPremio() public view returns (uint256) {
         return premio;
     }
 
