@@ -99,7 +99,7 @@ contract BolaoSenacoin is Ownable {
         return valorAposta;
     }
 
-    function setValorAposta(uint256 _valorAposta) public {
+    function setValorAposta(uint256 _valorAposta) public onlyOwner {
         require(_valorAposta > 0, "Valor da aposta deve ser maior que zero");
         valorAposta = _valorAposta;
     }
