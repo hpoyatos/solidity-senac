@@ -37,22 +37,23 @@ contract SenacoinBolao is Ownable {
     uint256 public valorAposta;
 
     function entrar(string memory pNome) public {
-        if (Senacoin(senacoinAddress).balanceOf(msg.sender) >= valorAposta) {
-            if (jogadoresInfo[msg.sender].isValue == false) {
-                jogadoresInfo[msg.sender] = Jogador({ nome: pNome, carteira: msg.sender, apostas: 1, isValue: true});
-                jogadores.push(msg.sender);
-            } else {
-                jogadoresInfo[msg.sender].apostas = jogadoresInfo[msg.sender].apostas + 1;
-            }
-            Senacoin(senacoinAddress).burnFrom(msg.sender, valorAposta);
-            apostas.push(msg.sender);
-            numApostas++;
-            premio = premio + valorAposta;
-            emit ApostaEvent(msg.sender, jogadoresInfo[msg.sender].nome, jogadoresInfo[msg.sender].apostas, numApostas, premio);
+        require(bytes(pNome).length > 0, "Nome deve ser fornecido");
+        require(Senacoin(senacoinAddress).balanceOf(msg.sender) >= valorAposta, "Saldo insuficiente")
+        if (jogadoresInfo[msg.sender].isValue == false) {
+            jogadoresInfo[msg.sender] = Jogador({ nome: pNome, carteira: msg.sender, apostas: 1, isValue: true});
+            jogadores.push(msg.sender);
+        } else {
+            jogadoresInfo[msg.sender].apostas = jogadoresInfo[msg.sender].apostas + 1;
         }
+        Senacoin(senacoinAddress).burnFrom(msg.sender, valorAposta);
+        apostas.push(msg.sender);
+        numApostas++;
+        premio = premio + valorAposta;
+        emit ApostaEvent(msg.sender, jogadoresInfo[msg.sender].nome, jogadoresInfo[msg.sender].apostas, numApostas, premio);
     }
 
     function escolherGanhador() public onlyOwner {
+        require(apostas.length > 0, "Nenhum jogador participou do jogo")
         uint index = random() % apostas.length;
         Senacoin(senacoinAddress).mint(apostas[index], premio);
         if (jogadoresInfo[apostas[index]].isValue == true) {
@@ -86,6 +87,7 @@ contract SenacoinBolao is Ownable {
     }
 
     function setValorAposta(uint256 _valorAposta) public {
+        require(_valorAposta > 0, "Valor da aposta deve ser maior que zero");
         valorAposta = _valorAposta;
     }
 
