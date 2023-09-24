@@ -21,7 +21,7 @@ contract GuardaSenacoin {
     
     function depositar(uint _quantia) public payable {
         // Definindo 1SNC como quantidade mínima de depósito
-        uint _qtdeMinima = 1*(10**18);
+        uint _qtdeMinima = 1*(10**Senacoin(senacoinAddress).decimals());
         // Validação da regra de quantidade mínima
         require(_quantia >= _qtdeMinima, "Envie pelo menos 1SNC");
         // Transfere a quantia da carteira do depositante para a carteira deste contrato
