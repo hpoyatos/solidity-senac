@@ -50,7 +50,7 @@ contract BolaoSenacoin is Ownable {
     // apostar() guarda informações do jogador, lança a aposta e emite evento. A aposta tem valor padronizado.
     function apostar(string memory pNome) public {
         require(bytes(pNome).length > 0, "Nome deve ser fornecido");
-        require(Senacoin(senacoinAddress).balanceOf(msg.sender) >= valorAposta, "Saldo insuficiente")
+        require(Senacoin(senacoinAddress).balanceOf(msg.sender) >= valorAposta, "Saldo insuficiente");
         if (jogadoresInfo[msg.sender].isValue == false) {
             jogadoresInfo[msg.sender] = Jogador({ nome: pNome, carteira: msg.sender, apostas: 1, isValue: true});
             jogadores.push(msg.sender);
@@ -66,7 +66,7 @@ contract BolaoSenacoin is Ownable {
 
     // escolherGanhador() só pode ser acionada pelo gerente do contrato
     function escolherGanhador() public onlyOwner {
-        require(apostas.length > 0, "Nenhum jogador participou do jogo")
+        require(apostas.length > 0, "Nenhum jogador participou do jogo");
         uint index = random() % apostas.length;
         Senacoin(senacoinAddress).mint(apostas[index], premio);
         if (jogadoresInfo[apostas[index]].isValue == true) {
