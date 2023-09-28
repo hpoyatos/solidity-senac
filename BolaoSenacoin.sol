@@ -1,4 +1,4 @@
-em// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: GPL-3.0
 pragma solidity >=0.8.18 <0.9.0;
 
 // Importação do contrato ERC20 do Senacoin e Ownable para uso do modificador onlyOwner
@@ -40,10 +40,8 @@ contract BolaoSenacoin is Ownable {
 
     // Atributos para armazenar as estruturas, jogadores, valores padrão de apostas, entre outros 
     mapping(address => Jogador) private jogadoresInfo;
-    address private gerente;
     address[] private jogadores;
     address[] private apostas;
-    uint256 public premio;
     uint256 public numApostas;
     uint256 public valorAposta;
 
@@ -57,20 +55,20 @@ contract BolaoSenacoin is Ownable {
         } else {
             jogadoresInfo[msg.sender].apostas = jogadoresInfo[msg.sender].apostas + 1;
         }
-        Senacoin(senacoinAddress).burnFrom(msg.sender, valorAposta);
+        Senacoin(senacoinAddress).transferFrom(msg.sender, address(this), valorAposta);
         apostas.push(msg.sender);
         numApostas++;
-        premio = premio + valorAposta;
-        emit ApostaEvent(msg.sender, jogadoresInfo[msg.sender].nome, jogadoresInfo[msg.sender].apostas, numApostas, premio);
+        emit ApostaEvent(msg.sender, jogadoresInfo[msg.sender].nome, jogadoresInfo[msg.sender].apostas, numApostas, Senacoin(senacoinAddress).balanceOf(address(this)));
     }
 
     // escolherGanhador() só pode ser acionada pelo gerente do contrato
     function escolherGanhador() public onlyOwner {
         require(apostas.length > 0, "Nenhum jogador participou do jogo");
         uint index = random() % apostas.length;
-        Senacoin(senacoinAddress).mint(apostas[index], premio);
+        uint _premio = Senacoin(senacoinAddress).balanceOf(address(this));
+        Senacoin(senacoinAddress).transfer(apostas[index], Senacoin(senacoinAddress).balanceOf(address(this)));
         if (jogadoresInfo[apostas[index]].isValue == true) {
-            emit FimDeJogoEvent(apostas[index], jogadoresInfo[apostas[index]].nome, premio);
+            emit FimDeJogoEvent(apostas[index], jogadoresInfo[apostas[index]].nome, _premio);
         }
         limpar();
     }
@@ -87,12 +85,8 @@ contract BolaoSenacoin is Ownable {
         return (jogadoresInfo[id].nome, jogadoresInfo[id].carteira, jogadoresInfo[id].apostas);
     }
 
-    function getGerente() public view returns (address) {
-        return gerente;
-    }
-
     function getPremio() public view returns (uint256) {
-        return premio;
+        return Senacoin(senacoinAddress).balanceOf(address(this));
     }
 
     function getValorAposta() public view returns (uint256) {
@@ -112,7 +106,6 @@ contract BolaoSenacoin is Ownable {
         jogadores = new address[](0);
         apostas = new address[](0);
         numApostas = 0;
-        premio = 0;
     }
 
     function random() private view returns (uint) {
@@ -121,9 +114,7 @@ contract BolaoSenacoin is Ownable {
 
     // Construtor do contrato
     constructor(address _senacoinAddress) {
-    gerente = msg.sender;
     numApostas = 0;
-    premio = 0;
     senacoinAddress = _senacoinAddress;
     // Valor padrão 1SNC
     valorAposta = 1 * 10 ** Senacoin(senacoinAddress).decimals();
