@@ -5,5 +5,5 @@
   "agressividade": 3,
   "agilidade": 1,
   "obediencia": 3,
-  "foto": "bulldog.png"
+  "foto": "https://raw.githubusercontent.com/hpoyatos/solidity-senac/main/ImagemBulldog.png"
 }
