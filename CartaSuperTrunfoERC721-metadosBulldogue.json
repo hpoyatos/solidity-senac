@@ -1,0 +1,9 @@
+{
+  "nome": "Bulldog Inglês",
+  "brincalhao": 5,
+  "peso": 30,
+  "agressividade": 3,
+  "agilidade": 1,
+  "obediencia": 3,
+  "foto": "bulldog.png"
+}
