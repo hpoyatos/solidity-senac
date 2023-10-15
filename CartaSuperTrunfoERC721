@@ -6,15 +6,29 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract CartaSuperTrunfoERC721 is ERC721, ERC721URIStorage, Ownable {
+    //Criando os mapeamentos que guardam as características de brincalhão, peso, agressividade, agilidade e obediência dos cachorros    
+    mapping(uint256 => uint8) private brincalhao;
+    mapping(uint256 => uint8) private peso;
+    mapping(uint256 => uint8) private agressividade;
+    mapping(uint256 => uint8) private agilidade;
+    mapping(uint256 => uint8) private obediencia;
+
     constructor() ERC721("CartaSuperTrunfoERC721", "CST") {}
 
-    // Permite forjar NFTs. O TokenId será o identificado único, e a url terá um arquivo JSON com os metadados estruturados
-    function safeMint(address to, uint256 tokenId, string memory uri)
+    // Permite forjar as cartas, armazenando também as características
+    function safeMint(address to, uint256 tokenId, string memory uri,
+    uint8 _brincalhao, uint8 _peso, uint8 _agressividade, 
+    uint8 _agilidade, uint8 _obediencia)
         public
         onlyOwner
     {
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, uri);
+        brincalhao[tokenId] = _brincalhao;
+        peso[tokenId] = _peso;
+        agressividade[tokenId] = _agressividade;
+        agilidade[tokenId] = _agilidade;
+        obediencia[tokenId] = _obediencia;
     }
 
     // Permite destruir NFTs passando o tokenId
@@ -39,5 +53,81 @@ contract CartaSuperTrunfoERC721 is ERC721, ERC721URIStorage, Ownable {
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
+    }
+
+    // Retorna a “quantidade de brincalhão” de um determinado cachorro NFT, basta informar o tokenId 
+    function getBrincalhao(uint256 tokenId) public view returns (uint8) {
+        return brincalhao[tokenId];
+    }
+
+     // Retorna o peso de um determinado cachorro NFT, basta informar o tokenId
+    function getPeso(uint256 tokenId) public view returns (uint8) {
+        return peso[tokenId];
+    }
+
+    // Retorna a “quantidade de agressividade” de um determinado cachorro NFT, basta informar o tokenId
+    function getAgressividade(uint256 tokenId) public view returns (uint8) {
+        return agressividade[tokenId];
+    }
+
+    // Retorna a “quantidade de agilidade” de um determinado cachorro NFT, basta informar o tokenId
+    function getAgilidade(uint256 tokenId) public view returns (uint8) {
+        return agilidade[tokenId];
+    }
+
+    // Retorna a “quantidade de obediência” de um determinado cachorro NFT, basta informar o tokenId
+    function getObediencia(uint256 tokenId) public view returns (uint8) {
+        return obediencia[tokenId];
+    }
+
+     // realiza o jogo de Super Trunfo. Deve ser passado o tokenId das duas cartas e qual característica será comparada, sendo 1 = brincalhão, 2 = peso, 3 = agressividade, 4 = agilidade e 5 = obediência
+    function superTrunfo(uint256 tokenId1, uint256 tokenId2, uint8 escolha) public {
+        if (escolha == 1){ // BRINCALHAO
+            if (brincalhao[tokenId1] > brincalhao[tokenId2]) {
+                transferFrom(ownerOf(tokenId2), ownerOf(tokenId1), tokenId2);
+            } else {
+                if (brincalhao[tokenId1] < brincalhao[tokenId2]) {
+                    transferFrom(ownerOf(tokenId1), ownerOf(tokenId2), tokenId1);
+                }
+            }
+        } else {
+            if (escolha == 2){ // PESO
+                if (peso[tokenId1] > peso[tokenId2]) {
+                transferFrom(ownerOf(tokenId2), ownerOf(tokenId1), tokenId2);
+                } else {
+                    if (peso[tokenId1] < peso[tokenId2]) {
+                        transferFrom(ownerOf(tokenId1), ownerOf(tokenId2), tokenId1);
+                    }
+                }
+            } else {
+                if (escolha == 3){ // AGRESSIVIDADE
+                    if (agressividade[tokenId1] > agressividade[tokenId2]) {
+                        transferFrom(ownerOf(tokenId2), ownerOf(tokenId1), tokenId2);
+                    } else {
+                        if (agressividade[tokenId1] < agressividade[tokenId2]) {
+                            transferFrom(ownerOf(tokenId1), ownerOf(tokenId2), tokenId1);
+                        }
+                    }
+                } else {
+                    if (escolha == 4){ // AGILIDADE
+                        if (agilidade[tokenId1] > agilidade[tokenId2]) {
+                            transferFrom(ownerOf(tokenId2), ownerOf(tokenId1), tokenId2);
+                        } else {
+                            if (agilidade[tokenId1] < agilidade[tokenId2]) {
+                                transferFrom(ownerOf(tokenId1), ownerOf(tokenId2), tokenId1);
+                            }
+                        }
+                    } else { // OBEDIENCIA
+                        if (obediencia[tokenId1] > obediencia[tokenId2]) {
+                            transferFrom(ownerOf(tokenId2), ownerOf(tokenId1), tokenId2);
+                        } else {
+                            if (obediencia[tokenId1] < obediencia[tokenId2]) {
+                                transferFrom(ownerOf(tokenId1), ownerOf(tokenId2), tokenId1);
+                            }
+                        }
+                    }  
+                }
+            }
+        }
     }
 }
